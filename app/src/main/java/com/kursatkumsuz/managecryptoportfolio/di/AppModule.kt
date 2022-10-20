@@ -29,7 +29,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideMarketRepository(apiService: ApiService) : CoinRepository {
+    fun provideCoinRepository(apiService: ApiService) : CoinRepository {
         return CoinRepositoryImp(apiService)
     }
 
