@@ -1,4 +1,4 @@
-package com.kursatkumsuz.managecryptoportfolio.presentation.market
+package com.kursatkumsuz.managecryptoportfolio.presentation.screens.market
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData

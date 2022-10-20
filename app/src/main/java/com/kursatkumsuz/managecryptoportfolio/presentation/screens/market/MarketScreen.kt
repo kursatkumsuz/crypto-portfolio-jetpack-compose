@@ -1,4 +1,4 @@
-package com.kursatkumsuz.managecryptoportfolio.presentation.market
+package com.kursatkumsuz.managecryptoportfolio.presentation.screens.market
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,7 +13,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.kursatkumsuz.managecryptoportfolio.presentation.market.components.CoinListView
+import com.kursatkumsuz.managecryptoportfolio.presentation.screens.market.components.CoinListView
 
 @Composable
 fun MarketScreen(navController: NavController) {

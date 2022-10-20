@@ -1,4 +1,4 @@
-package com.kursatkumsuz.managecryptoportfolio.presentation.search
+package com.kursatkumsuz.managecryptoportfolio.presentation.screens.search
 
 import androidx.lifecycle.ViewModel
 

@@ -1,4 +1,4 @@
-package com.kursatkumsuz.managecryptoportfolio.presentation.market.components
+package com.kursatkumsuz.managecryptoportfolio.presentation.screens.market.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
