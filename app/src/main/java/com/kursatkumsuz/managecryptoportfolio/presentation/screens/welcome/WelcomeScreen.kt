@@ -5,16 +5,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.*
 import com.kursatkumsuz.managecryptoportfolio.util.OnBoardingPage
+import com.kursatkumsuz.managecryptoportfolio.R
 
 @ExperimentalPagerApi
 @Composable
@@ -55,7 +51,7 @@ fun WelcomeScreen(navController: NavHostController) {
         )
         StartButton(pagerState = pagerState) {
             navController.popBackStack()
-            navController.navigate("market_screen")
+            navController.navigate("signin_screen")
         }
     }
 
@@ -100,21 +96,23 @@ fun PagerScreen(onBoardingPage: OnBoardingPage) {
 fun StartButton(pagerState: PagerState, onClick: () -> Unit) {
     AnimatedVisibility(visible = pagerState.currentPage == 2) {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(top = 40.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.Top,
         ) {
 
             Button(
-                modifier = Modifier.size(250.dp, 50.dp),
+                modifier = Modifier.size(60.dp, 60.dp),
                 onClick = onClick,
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Blue,
-                    contentColor = Color.White
-                )
+                    backgroundColor = Color.White,
+                    contentColor = Color.Black
+                ),
+                shape = RoundedCornerShape(99.dp)
             ) {
-                Text(text = "Get Started")
+                Icon(painter = painterResource(id = R.drawable.ic_next), contentDescription = "next icon")
             }
         }
     }

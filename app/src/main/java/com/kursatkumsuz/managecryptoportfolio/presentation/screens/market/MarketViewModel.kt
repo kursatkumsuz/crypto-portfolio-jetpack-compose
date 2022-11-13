@@ -1,12 +1,12 @@
 package com.kursatkumsuz.managecryptoportfolio.presentation.screens.market
 
+
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kursatkumsuz.managecryptoportfolio.domain.model.CoinItem
-import com.kursatkumsuz.managecryptoportfolio.domain.usecase.GetCoinUseCase
-import com.kursatkumsuz.managecryptoportfolio.util.Status
+import com.kursatkumsuz.managecryptoportfolio.domain.model.coin.CoinItem
+import com.kursatkumsuz.managecryptoportfolio.domain.usecase.coin.GetCoinUseCase
+import com.kursatkumsuz.managecryptoportfolio.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,24 +16,23 @@ class MarketViewModel @Inject constructor(
     private val coinUseCase: GetCoinUseCase
 ) : ViewModel() {
 
-   // var coinList = mutableStateOf<List<CoinItem>>(listOf())
-    var coinLiveData = MutableLiveData<List<CoinItem>>()
-    var errorMessage =  mutableStateOf("")
+    private var _cryptoList = mutableStateOf<List<CoinItem>>(listOf())
+    val cryptoList = _cryptoList
 
     init {
         loadCoins()
     }
 
-    fun loadCoins() {
+    private fun loadCoins() {
         viewModelScope.launch {
-            val result = coinUseCase.getCoinList()
-            when (result.status) {
-                Status.SUCCESS -> {
-                    coinLiveData.value = result.data?.data
-                    errorMessage.value = ""
-                }
-                Status.ERROR -> {
-                    errorMessage.value = result.message!!
+            coinUseCase.invoke().collect {
+                when(it) {
+                    is Response.Success -> {
+                        _cryptoList.value = it.data.data
+                    }
+                    is Response.Loading -> {}
+                    is Response.Error -> {}
+
                 }
             }
         }

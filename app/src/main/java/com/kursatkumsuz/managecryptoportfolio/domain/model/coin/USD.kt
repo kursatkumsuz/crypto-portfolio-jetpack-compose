@@ -1,4 +1,4 @@
-package com.kursatkumsuz.managecryptoportfolio.domain.model
+package com.kursatkumsuz.managecryptoportfolio.domain.model.coin
 
 data class USD(
     val fully_diluted_market_cap: Double,

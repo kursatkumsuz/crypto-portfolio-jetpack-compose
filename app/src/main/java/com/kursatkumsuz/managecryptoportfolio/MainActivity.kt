@@ -14,6 +14,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,15 +45,17 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 Scaffold(
                     bottomBar = {
-                        if (currentRoute(navController) != "welcome_screen") {
+                        if (currentRoute(navController) != "welcome_screen" &&
+                            currentRoute(navController) != "signin_screen" &&
+                            currentRoute(navController) != "signup_screen"
+                        ) {
+
                             BottomNavigationBar(items = listOf(
                                 BottomNavItem("Market", "market_screen", Icons.Default.Home),
                                 BottomNavItem("Search", "search_screen", Icons.Default.Search),
-                                BottomNavItem(
-                                    "Portfolio",
-                                    "portfolio_screen",
-                                    Icons.Default.Add
-                                )
+                                BottomNavItem("WatchList", "favorites_screen", Icons.Default.List),
+                                BottomNavItem("Portfolio", "portfolio_screen", Icons.Default.Add)
+
                             ), navController = navController, onItemClick = {
                                 navController.navigate(it.route)
                             })

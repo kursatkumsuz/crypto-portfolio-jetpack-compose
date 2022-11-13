@@ -1,15 +1,14 @@
 package com.kursatkumsuz.managecryptoportfolio.util
 
-import com.kursatkumsuz.managecryptoportfolio.domain.model.CoinItem
 import java.text.DecimalFormat
 
 class FormatCoinPrice {
 
     companion object {
 
-        fun formatPrice(coin: CoinItem): String {
+        fun formatPrice(price : Double): String {
 
-            val coinPrice = coin.quote.USD.price
+            val coinPrice = price
             val dec = DecimalFormat("#,###.00")
             val secondDec = DecimalFormat("0.#####")
             val secondThird = DecimalFormat("0.#")
@@ -23,7 +22,7 @@ class FormatCoinPrice {
                 secondDec.format(coinPrice)
             }
 
-            return "$$formattedPrice"
+            return formattedPrice
         }
     }
 }

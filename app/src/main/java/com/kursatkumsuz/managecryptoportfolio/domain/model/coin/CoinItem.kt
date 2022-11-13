@@ -1,4 +1,4 @@
-package com.kursatkumsuz.managecryptoportfolio.domain.model
+package com.kursatkumsuz.managecryptoportfolio.domain.model.coin
 
 data class CoinItem(
     val id: Int,

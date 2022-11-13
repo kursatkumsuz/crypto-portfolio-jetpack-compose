@@ -1,12 +1,25 @@
 package com.kursatkumsuz.managecryptoportfolio.di
 
+import android.content.Context
+import androidx.room.Room
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.kursatkumsuz.managecryptoportfolio.data.local.FavoritesDao
+import com.kursatkumsuz.managecryptoportfolio.data.local.FavoritesDatabase
 import com.kursatkumsuz.managecryptoportfolio.data.remote.ApiService
+import com.kursatkumsuz.managecryptoportfolio.data.repository.AuthRepositoryImp
 import com.kursatkumsuz.managecryptoportfolio.data.repository.CoinRepositoryImp
+import com.kursatkumsuz.managecryptoportfolio.data.repository.FavoritesRepositoryImp
+import com.kursatkumsuz.managecryptoportfolio.data.repository.PortfolioRepositoryImp
+import com.kursatkumsuz.managecryptoportfolio.domain.repository.AuthRepository
 import com.kursatkumsuz.managecryptoportfolio.domain.repository.CoinRepository
+import com.kursatkumsuz.managecryptoportfolio.domain.repository.FavoritesRepository
+import com.kursatkumsuz.managecryptoportfolio.domain.repository.PortfolioRepository
 import com.kursatkumsuz.managecryptoportfolio.util.Constants.Companion.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -18,7 +31,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit () = Retrofit.Builder()
+    fun provideRetrofit() = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -29,8 +42,49 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideCoinRepository(apiService: ApiService) : CoinRepository {
+    fun provideDao(favoritesDatabase: FavoritesDatabase) = favoritesDatabase.getDao()
+
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(
+        context,
+        FavoritesDatabase::class.java,
+        "favorites_database"
+    ).build()
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirestore() : FirebaseFirestore {
+        return FirebaseFirestore.getInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCoinRepository(apiService: ApiService): CoinRepository {
         return CoinRepositoryImp(apiService)
     }
 
+    @Provides
+    @Singleton
+    fun provideFavoritesRepository(dao: FavoritesDao): FavoritesRepository {
+        return FavoritesRepositoryImp(dao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(firebaseAuth: FirebaseAuth): AuthRepository {
+        return AuthRepositoryImp(firebaseAuth)
+    }
+
+    @Provides
+    @Singleton
+    fun providePortfoliohRepository(firebaseFirestore: FirebaseFirestore): PortfolioRepository {
+        return PortfolioRepositoryImp(firebaseFirestore)
+    }
 }
