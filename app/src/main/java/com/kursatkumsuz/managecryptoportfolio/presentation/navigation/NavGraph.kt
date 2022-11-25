@@ -14,6 +14,7 @@ import com.kursatkumsuz.managecryptoportfolio.presentation.screens.favorites.Fav
 import com.kursatkumsuz.managecryptoportfolio.presentation.screens.market.MarketScreen
 import com.kursatkumsuz.managecryptoportfolio.presentation.screens.portfolio.PortfolioScreen
 import com.kursatkumsuz.managecryptoportfolio.presentation.screens.search.SearchScreen
+import com.kursatkumsuz.managecryptoportfolio.presentation.screens.settings.SettingsScreen
 import com.kursatkumsuz.managecryptoportfolio.presentation.screens.signin.SignInScreen
 import com.kursatkumsuz.managecryptoportfolio.presentation.screens.signup.SignUpScreen
 import com.kursatkumsuz.managecryptoportfolio.presentation.screens.welcome.WelcomeScreen
@@ -23,6 +24,7 @@ import com.kursatkumsuz.managecryptoportfolio.presentation.screens.welcome.Welco
 @Composable
 fun SetupNavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "welcome_screen") {
+
         composable("welcome_screen") {
             WelcomeScreen(navController = navController)
         }
@@ -39,16 +41,18 @@ fun SetupNavGraph(navController: NavHostController) {
             SearchScreen(navController = navController)
         }
         composable("portfolio_screen") {
-            PortfolioScreen(navController = navController)
+            PortfolioScreen()
         }
         composable("favorites_screen") {
             FavoritesScreen()
+        }
+        composable("settings_screen") {
+            SettingsScreen(navController)
         }
         composable("detail_screen/{name}/{price}/{symbol}", arguments = listOf(
             navArgument("name") { type = NavType.StringType },
             navArgument("price") { type = NavType.FloatType },
             navArgument("symbol") { type = NavType.StringType }
-
         )) {
             val name = remember { it.arguments?.getString("name") }
             val price = remember { it.arguments?.getFloat("price") }
