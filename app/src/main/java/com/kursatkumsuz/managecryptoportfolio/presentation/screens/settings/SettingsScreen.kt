@@ -7,7 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.*
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,7 +57,7 @@ fun SettingsScreen(navController: NavHostController) {
                 .padding(horizontal = 20.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
-        NotificationSettingSection()
+        NotificationSettingSection(viewModel)
 
         // Help Section
         Spacer(modifier = Modifier.height(10.dp))
@@ -143,8 +143,10 @@ fun UserInfoSection(user: UserModel) {
 
 
 @Composable
-fun NotificationSettingSection() {
-    var checkedState by remember { mutableStateOf(false) }
+fun NotificationSettingSection(viewModel: SettingsViewModel) {
+    val notificationState = viewModel.notificationState.value
+    val checkState = remember { mutableStateOf(notificationState) }
+
     Box(
         modifier = Modifier
             .clip(CircleShape)
@@ -167,7 +169,10 @@ fun NotificationSettingSection() {
                 .align(
                     Alignment.CenterEnd
                 ),
-            checked = checkedState, onCheckedChange = { checkedState = it })
+            checked = checkState.value, onCheckedChange = {
+                checkState.value = it
+                viewModel.saveNotificationPreference(it)
+            })
     }
 }
 
@@ -196,6 +201,7 @@ fun LogoutSection(navController: NavHostController, viewModel: SettingsViewModel
                 ),
             onClick = {
                 viewModel.signOut()
+                navController.popBackStack()
                 navController.navigate("signin_screen")
             }) {
             Icon(
