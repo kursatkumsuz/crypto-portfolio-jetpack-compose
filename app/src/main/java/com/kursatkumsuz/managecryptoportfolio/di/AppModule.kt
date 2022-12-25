@@ -7,14 +7,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.kursatkumsuz.managecryptoportfolio.data.local.FavoritesDao
 import com.kursatkumsuz.managecryptoportfolio.data.local.FavoritesDatabase
 import com.kursatkumsuz.managecryptoportfolio.data.remote.ApiService
-import com.kursatkumsuz.managecryptoportfolio.data.repository.AuthRepositoryImp
-import com.kursatkumsuz.managecryptoportfolio.data.repository.CoinRepositoryImp
-import com.kursatkumsuz.managecryptoportfolio.data.repository.FavoritesRepositoryImp
-import com.kursatkumsuz.managecryptoportfolio.data.repository.PortfolioRepositoryImp
-import com.kursatkumsuz.managecryptoportfolio.domain.repository.AuthRepository
-import com.kursatkumsuz.managecryptoportfolio.domain.repository.CoinRepository
-import com.kursatkumsuz.managecryptoportfolio.domain.repository.FavoritesRepository
-import com.kursatkumsuz.managecryptoportfolio.domain.repository.PortfolioRepository
+import com.kursatkumsuz.managecryptoportfolio.data.repository.*
+import com.kursatkumsuz.managecryptoportfolio.data.worker.WorkerRequest
+import com.kursatkumsuz.managecryptoportfolio.domain.repository.*
 import com.kursatkumsuz.managecryptoportfolio.util.Constants.Companion.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -60,7 +55,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFirestore() : FirebaseFirestore {
+    fun provideFirestore(): FirebaseFirestore {
         return FirebaseFirestore.getInstance()
     }
 
@@ -78,13 +73,27 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(firebaseAuth: FirebaseAuth): AuthRepository {
-        return AuthRepositoryImp(firebaseAuth)
+    fun provideAuthRepository(
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore
+    ): AuthRepository {
+        return AuthRepositoryImp(firebaseAuth, firestore)
     }
 
     @Provides
     @Singleton
     fun providePortfoliohRepository(firebaseFirestore: FirebaseFirestore): PortfolioRepository {
         return PortfolioRepositoryImp(firebaseFirestore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkerRequest(@ApplicationContext context: Context) =
+        WorkerRequest(context)
+
+    @Provides
+    @Singleton
+    fun provideNotificationRepository(@ApplicationContext context: Context): DataStoreRepository {
+        return NotificationRepositoryImp(context)
     }
 }

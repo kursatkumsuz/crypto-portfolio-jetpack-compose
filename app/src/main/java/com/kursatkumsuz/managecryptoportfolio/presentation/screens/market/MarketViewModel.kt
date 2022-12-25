@@ -19,23 +19,49 @@ class MarketViewModel @Inject constructor(
     private var _cryptoList = mutableStateOf<List<CoinItem>>(listOf())
     val cryptoList = _cryptoList
 
+    private var _popularList = mutableStateOf<List<CoinItem>>(listOf())
+    val popularList = _popularList
+
+    private var _loadingState = mutableStateOf(false)
+    val loadingState = _loadingState
+
+    private var _errorMessage = mutableStateOf("")
+    val errorMessage = _errorMessage
+
     init {
+        refresh()
+    }
+
+    fun refresh() {
         loadCoins()
     }
 
     private fun loadCoins() {
         viewModelScope.launch {
             coinUseCase.invoke().collect {
-                when(it) {
+                when (it) {
                     is Response.Success -> {
-                        _cryptoList.value = it.data.data
+                        val list = it.data.data
+                        _cryptoList.value = list
+                        filterPopularCoins(list)
+                        _loadingState.value = false
                     }
-                    is Response.Loading -> {}
-                    is Response.Error -> {}
+                    is Response.Loading -> {
+                        _loadingState.value = true
+                    }
+                    is Response.Error -> {
+                        _loadingState.value = false
+                        _errorMessage.value = it.msg
+                    }
 
                 }
             }
         }
     }
 
+    private fun filterPopularCoins(list: List<CoinItem>) {
+        viewModelScope.launch {
+            _popularList.value = list.filter { i -> i.quote.USD.price > 50.00 }
+        }
+    }
 }

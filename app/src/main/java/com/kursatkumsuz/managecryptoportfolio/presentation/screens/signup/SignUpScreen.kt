@@ -14,10 +14,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.kursatkumsuz.managecryptoportfolio.presentation.components.CustomCircularProgress
-import com.kursatkumsuz.managecryptoportfolio.presentation.components.CustomInputText
-import com.kursatkumsuz.managecryptoportfolio.presentation.components.CustomPasswordText
-import com.kursatkumsuz.managecryptoportfolio.presentation.components.Toast
+import com.kursatkumsuz.managecryptoportfolio.domain.model.user.UserModel
+import com.kursatkumsuz.managecryptoportfolio.presentation.components.common.CustomCircularProgress
+import com.kursatkumsuz.managecryptoportfolio.presentation.components.common.CustomInputText
+import com.kursatkumsuz.managecryptoportfolio.presentation.components.common.CustomPasswordText
+import com.kursatkumsuz.managecryptoportfolio.presentation.components.common.Toast
 import com.kursatkumsuz.managecryptoportfolio.util.Response
 
 @Composable
@@ -34,6 +35,7 @@ fun SignUpScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Center
     ) {
 
+        var nameState by remember { mutableStateOf("") }
         var emailState by remember { mutableStateOf("") }
         var passwordState by remember { mutableStateOf("") }
 
@@ -55,11 +57,17 @@ fun SignUpScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(60.dp))
 
-        CustomInputText(labelText = "Email",backgroundColor = Color(0xFF252A34)) { emailState = it }
+        CustomInputText(labelText = "Name", backgroundColor = Color(0xFF252A34)) { nameState = it }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        CustomPasswordText{ passwordState = it }
+        CustomInputText(labelText = "Email", backgroundColor = Color(0xFF252A34)) {
+            emailState = it
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        CustomPasswordText { passwordState = it }
 
         Spacer(modifier = Modifier.height(60.dp))
 
@@ -68,7 +76,7 @@ fun SignUpScreen(navController: NavHostController) {
             colors = ButtonDefaults.buttonColors(Color(0xFF4453CA)),
             shape = RoundedCornerShape(20.dp),
             onClick = {
-                viewModel.signUp(emailState, passwordState)
+                viewModel.signUp(nameState,emailState, passwordState)
             }) {
             Text(text = "Create", color = Color.White)
             Spacer(modifier = Modifier.width(5.dp))

@@ -1,8 +1,12 @@
 package com.kursatkumsuz.managecryptoportfolio.domain.model.portfolio
 
 data class PortfolioModel(
-    val name : String,
-    val symbol : String,
-    val amount : String,
-    val price : String
+    val id : String? = "",
+    val name : String = "",
+    val symbol : String = "",
+    val buyingPrice : String = "",
+    val amount : String = "",
+    val totalPrice : String = "",
 )
+
+

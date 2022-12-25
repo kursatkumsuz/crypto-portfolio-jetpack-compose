@@ -13,14 +13,14 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase
-): ViewModel() {
+) : ViewModel() {
 
     private val _signInFlow = MutableSharedFlow<Response<AuthResult>>()
     val signInFlow = _signInFlow
 
     fun signIn(email: String, password: String) = viewModelScope.launch {
-        signInUseCase.invoke(email, password).collect {
-            _signInFlow.emit(it)
+        signInUseCase.invoke(email, password).collect { response ->
+            _signInFlow.emit(response)
         }
     }
 }

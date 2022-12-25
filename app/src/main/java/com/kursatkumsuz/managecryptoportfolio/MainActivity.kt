@@ -6,24 +6,19 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -42,7 +37,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ManageCryptoPortfolioTheme {
+
                 val navController = rememberNavController()
+
                 Scaffold(
                     bottomBar = {
                         if (currentRoute(navController) != "welcome_screen" &&
@@ -51,12 +48,15 @@ class MainActivity : ComponentActivity() {
                         ) {
 
                             BottomNavigationBar(items = listOf(
+
                                 BottomNavItem("Market", "market_screen", Icons.Default.Home),
                                 BottomNavItem("Search", "search_screen", Icons.Default.Search),
-                                BottomNavItem("WatchList", "favorites_screen", Icons.Default.List),
-                                BottomNavItem("Portfolio", "portfolio_screen", Icons.Default.Add)
+                                BottomNavItem("Favorite", "favorites_screen", Icons.Default.Favorite),
+                                BottomNavItem("Portfolio", "portfolio_screen", Icons.Default.List),
+                                BottomNavItem("Settings", "settings_screen", Icons.Default.Settings)
 
                             ), navController = navController, onItemClick = {
+                                navController.popBackStack()
                                 navController.navigate(it.route)
                             })
                         }
@@ -80,7 +80,6 @@ class MainActivity : ComponentActivity() {
 
         println("isVisible ${backStackEntry?.destination?.route}")
 
-
         BottomNavigation(
             modifier = modifier,
             backgroundColor = Color.Black,
@@ -94,24 +93,20 @@ class MainActivity : ComponentActivity() {
                     unselectedContentColor = Color.DarkGray,
                     onClick = { onItemClick(item) },
                     icon = {
-                        AnimatedVisibility(visible = selected) {
+                        AnimatedVisibility(visible = selected,) {
                             Row(
-                                horizontalArrangement = Arrangement.SpaceEvenly,
                                 modifier = modifier
-                                    .background(MaterialTheme.colors.primary)
-                                    .padding(10.dp)
-                                    .clip(shape = RoundedCornerShape(99.dp)),
-
+                                    .background(MaterialTheme.colors.primary),
+                                verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                Icon(imageVector = item.icon, contentDescription = item.name)
-                                Text(
-                                    text = item.name,
-                                    fontSize = 13.sp,
-                                    modifier = modifier.padding(3.dp)
-                                )
+                                    Row(modifier = Modifier.clip(CircleShape)
+                                        .background(Color(0x9A293646))) {
+                                        Icon(imageVector = item.icon, contentDescription = item.name, modifier = Modifier.padding(10.dp))
+                                    }
                             }
                         }
-                        AnimatedVisibility(visible = !selected) {
+                        AnimatedVisibility(
+                            visible = !selected) {
                             Icon(imageVector = item.icon, contentDescription = item.name)
                         }
                     })

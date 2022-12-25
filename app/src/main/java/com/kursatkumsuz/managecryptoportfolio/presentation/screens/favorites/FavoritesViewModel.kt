@@ -38,6 +38,9 @@ class FavoritesViewModel @Inject constructor(
         loadCoins()
     }
 
+    /**
+     * Loads favorites from RoomDB
+     */
     private fun loadFavorites() {
         viewModelScope.launch {
             getFavoritesUseCase.invoke().collect {
@@ -78,6 +81,10 @@ class FavoritesViewModel @Inject constructor(
         }
     }
 
+    /**
+    *Deletes a given favorite from the database.
+    *@param favorite: The favorite to delete.
+     */
     fun deleteFavorite(favorite: FavoritesEntity) {
         viewModelScope.launch {
             deleteFavoriteUseCase.invoke(favorite)

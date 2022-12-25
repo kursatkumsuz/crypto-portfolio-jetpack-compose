@@ -21,7 +21,7 @@ sealed class OnBoardingPage(
     )
 
     object Third : OnBoardingPage(
-        title = "Manage Crypto Currencies in One App",
+        title = "Track Crypto Currencies",
         description = "You can monitor price changes at all hours of the day and track your investments in real time.",
         R.drawable.ic_onboard_third
     )

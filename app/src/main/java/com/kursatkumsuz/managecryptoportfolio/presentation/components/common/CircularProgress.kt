@@ -1,4 +1,4 @@
-package com.kursatkumsuz.managecryptoportfolio.presentation.components
+package com.kursatkumsuz.managecryptoportfolio.presentation.components.common
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator

@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.*
 import com.kursatkumsuz.managecryptoportfolio.util.OnBoardingPage
@@ -23,6 +24,7 @@ import com.kursatkumsuz.managecryptoportfolio.R
 @ExperimentalPagerApi
 @Composable
 fun WelcomeScreen(navController: NavHostController) {
+    val viewModel : WelcomeScreenViewModel = hiltViewModel()
     val pages = listOf(
         OnBoardingPage.First,
         OnBoardingPage.Second,
@@ -51,7 +53,11 @@ fun WelcomeScreen(navController: NavHostController) {
         )
         StartButton(pagerState = pagerState) {
             navController.popBackStack()
-            navController.navigate("signin_screen")
+            if(viewModel.isLoggedInState.value) {
+                navController.navigate("market_screen")
+            } else {
+                navController.navigate("signin_screen")
+            }
         }
     }
 

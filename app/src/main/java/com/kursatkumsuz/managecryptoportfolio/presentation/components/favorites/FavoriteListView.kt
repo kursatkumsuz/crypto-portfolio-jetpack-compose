@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,13 +37,18 @@ fun FavoriteListView(
     LazyColumn {
         if (favoriteList.isNotEmpty() && coinList.isNotEmpty())
             items(favoriteList.size) { index ->
-                GridListItem(favoriteList[index], coinList[index], colorList[index % 5], viewModel)
+                FavoriteListItem(
+                    favoriteList[index],
+                    coinList[index],
+                    colorList[index % 5],
+                    viewModel
+                )
             }
     }
 }
 
 @Composable
-fun GridListItem(
+fun FavoriteListItem(
     favorite: FavoritesEntity,
     coin: CoinItem,
     color: Color,
@@ -72,18 +78,60 @@ fun GridListItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Text(text = "$$price", fontSize = 16.sp, color = Color.LightGray)
+                Text(
+                    text = "$$price",
+                    fontSize = 16.sp,
+                    color = Color.LightGray,
+                    modifier = Modifier.padding(10.dp)
+                )
+
+                LastDayChangeSection(coin.quote.USD.percent_change_24h)
 
                 IconButton(onClick = {
                     viewModel.deleteFavorite(favorite)
                 }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_delete_24),
+                        painter = painterResource(id = R.drawable.ic_baseline_star_24),
                         contentDescription = "delete icon",
+                        tint = Color(0xFF22A206)
                     )
                 }
             }
         }
 
+    }
+}
+
+@Composable
+fun LastDayChangeSection(lastDayChangePercentage: Double) {
+
+    val (backgroundColor, icon) = ColorAndIcon(lastDayChangePercentage)
+
+    Card(backgroundColor = backgroundColor) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+
+            Icon(painter = icon, contentDescription = "chance icon", tint = Color.White)
+
+            Text(
+                text = "%${String.format("%.2f", lastDayChangePercentage)}",
+                color = Color.White,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(5.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun ColorAndIcon(lastDayChangePercentage: Double): Pair<Color, Painter> {
+    return when {
+        lastDayChangePercentage < 0 -> Pair(
+            Color.Red,
+            painterResource(id = R.drawable.ic_baseline_arrow_drop_down_24)
+        )
+        else -> Pair(
+            Color(0xFF90C70F),
+            painterResource(id = R.drawable.ic_baseline_arrow_drop_up_24)
+        )
     }
 }

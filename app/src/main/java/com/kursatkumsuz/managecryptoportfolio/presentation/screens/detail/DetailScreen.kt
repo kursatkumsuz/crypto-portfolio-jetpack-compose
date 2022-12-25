@@ -11,26 +11,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.kursatkumsuz.managecryptoportfolio.domain.model.favorites.FavoritesEntity
-import com.kursatkumsuz.managecryptoportfolio.presentation.components.LoadingCircularProgress
+import com.kursatkumsuz.managecryptoportfolio.domain.model.portfolio.PortfolioModel
+import com.kursatkumsuz.managecryptoportfolio.presentation.components.common.CustomButton
+import com.kursatkumsuz.managecryptoportfolio.presentation.components.common.CustomInputText
+import com.kursatkumsuz.managecryptoportfolio.presentation.components.detail.BackButton
+import com.kursatkumsuz.managecryptoportfolio.presentation.components.detail.InfoCard
 import com.kursatkumsuz.managecryptoportfolio.util.FormatCoinPrice.Companion.formatPrice
-import com.kursatkumsuz.managecryptoportfolio.util.Response
 import kotlinx.coroutines.launch
-import javax.net.ssl.SSLEngineResult.Status
 
 @ExperimentalMaterialApi
 @Composable
 fun DetailScreen(
+    navHostController: NavHostController,
     name: String,
     price: Float,
-    symbol: String
+    symbol: String,
+    lastDayChange: Float,
+    lastOneHourChange: Float
 ) {
     val viewModel: DetailViewModel = hiltViewModel()
+    val errorMessage = viewModel.errorMessage.value
     val formattedPrice = formatPrice(price.toDouble())
-    val addFavoriteState = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
     val sheetState = rememberModalBottomSheetState(
@@ -40,101 +47,70 @@ fun DetailScreen(
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
-        sheetContent = { BottomSheet(name, formattedPrice, viewModel) },
+        sheetContent = { BottomSheet(name, symbol, price.toString(), viewModel) },
         modifier = Modifier.fillMaxSize()
     ) {
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.primary),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = name, fontSize = 36.sp, color = Color.White)
-            Spacer(modifier = Modifier.height(10.dp))
-            Card(
-                modifier = Modifier
-                    .size(90.dp, 30.dp)
-                    .background(MaterialTheme.colors.secondary),
-                shape = RoundedCornerShape(50.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(text = symbol, fontSize = 20.sp, color = Color.Black)
-                }
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Show the Toast if there is an error message
+            if(errorMessage.isNotEmpty()) {
+                Toast.makeText(LocalContext.current, errorMessage, Toast.LENGTH_SHORT).show()
             }
-            Spacer(modifier = Modifier.height(30.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.primary),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
 
-            Text(text = formattedPrice, fontSize = 36.sp, color = Color.White)
+                BackButton(navController = navHostController)
 
-            Spacer(modifier = Modifier.height(80.dp))
+                Spacer(modifier = Modifier.height(30.dp))
 
-            Button(
-                modifier = Modifier.size(320.dp, 65.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xFF4453CA)),
-                shape = RoundedCornerShape(20.dp),
-                onClick = {
-                    coroutineScope.launch {
-                        if (sheetState.isVisible) sheetState.hide()
-                        else sheetState.show()
+                Text(text = name, fontSize = 36.sp, color = Color.White)
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Card(
+                    modifier = Modifier
+                        .size(90.dp, 30.dp)
+                        .background(MaterialTheme.colors.secondary),
+                    shape = RoundedCornerShape(50.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = symbol, fontSize = 20.sp, color = Color.Black)
                     }
                 }
-            ) {
-                Text(text = "Add Portfolio", color = Color.White)
-            }
 
-            Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(30.dp))
 
-            Button(
-                modifier = Modifier.size(320.dp, 65.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xFFE1E2EB)),
-                shape = RoundedCornerShape(20.dp),
-                onClick = { addFavoriteState.value = true }) {
-                Text(text = "Add Favorites", color = Color.DarkGray)
+                Text(text = "$$formattedPrice", fontSize = 36.sp, color = Color.White)
+                Spacer(modifier = Modifier.height(40.dp))
+                DetailInfoSection(lastDayChange.toDouble(), lastOneHourChange.toDouble())
+                Spacer(modifier = Modifier.height(80.dp))
 
-                if (addFavoriteState.value) addToFavorites(name, symbol, viewModel)
-            }
-        }
-    }
-}
+                CustomButton(
+                    text = "Add To Portfolio",
+                    color = Color(0xFF4453CA),
+                    textColor = Color.White,
+                    onClick = {
+                        coroutineScope.launch {
+                            if (sheetState.isVisible) sheetState.hide()
+                            else sheetState.show()
+                        }
+                    }) {}
 
-@Composable
-private fun addToFavorites(coinName: String, coinSymbol: String, viewModel: DetailViewModel) {
-    val favorite = FavoritesEntity(coinName, coinSymbol)
+                CustomButton(
+                    text = "Add To Favorite",
+                    onClick = {
+                        val favorite = FavoritesEntity(symbol)
+                        viewModel.addToFavorite(favorite)
+                    }) {
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.addToFavorite(favorite)
-    }
-}
-
-@Composable
-private fun addToPortfolio(
-    coinName: String,
-    coinSymbol: String,
-    coinPrice: String,
-    viewModel: DetailViewModel
-) {
-
-    LaunchedEffect(key1 = Unit) {
-        viewModel.addToPortfolio(coinName, coinSymbol, coinPrice)
-    }
-}
-
-@Composable
-private fun CheckAddPortfolioState(viewModel: DetailViewModel) {
-    val context = LocalContext.current
-    LaunchedEffect(key1 = Unit) {
-        viewModel.addToPortfolioFlow.collect {
-            when (it) {
-                is Response.Success -> {
-                    Toast.makeText(context, "Succesfully Added!", Toast.LENGTH_SHORT).show()
-                }
-                is Response.Loading -> {}
-                is Response.Error -> {
-                    Toast.makeText(context, it.msg, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -143,10 +119,25 @@ private fun CheckAddPortfolioState(viewModel: DetailViewModel) {
 
 
 @Composable
-fun BottomSheet(name: String, price: String, viewModel: DetailViewModel) {
+fun DetailInfoSection(lastDayChange: Double, lastOneHourChange: Double) {
 
-    val priceState = remember { mutableStateOf(price) }
-    val addPortfolioState = remember { mutableStateOf(false) }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        InfoCard(lastDayChange, "24h Change")
+        InfoCard(lastOneHourChange, "1h Change")
+    }
+}
+
+
+@Composable
+fun BottomSheet(name: String, symbol: String, price: String, viewModel: DetailViewModel) {
+
+    var priceState by remember { mutableStateOf(price) }
+    var amountState by remember { mutableStateOf("0.0") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -160,33 +151,47 @@ fun BottomSheet(name: String, price: String, viewModel: DetailViewModel) {
             fontWeight = FontWeight.Bold,
             color = Color.White
         )
+
         Spacer(modifier = Modifier.height(30.dp))
-        TextField(
-            value = priceState.value,
-            onValueChange = { priceState.value = it },
-            singleLine = true,
-            modifier = Modifier
-                .width(320.dp)
-                .height(65.dp),
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = MaterialTheme.colors.secondary,
-                focusedIndicatorColor = Color.Transparent,
-                textColor = Color(0xFF95A6C5)
-            ),
-            shape = RoundedCornerShape(20.dp)
-        )
+
+        CustomInputText(
+            keyboardType = KeyboardType.Decimal,
+            initialText = priceState
+        ) {
+            priceState = it
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        CustomInputText(
+            keyboardType = KeyboardType.Decimal,
+            initialText = amountState
+        ) {
+            amountState = it
+        }
+
         Spacer(modifier = Modifier.height(20.dp))
-        Button(
-            modifier = Modifier.size(260.dp, 50.dp),
-            colors = ButtonDefaults.buttonColors(Color(0xFFE1E2EB)),
-            shape = RoundedCornerShape(20.dp),
-            onClick = { addPortfolioState.value = true }) {
-            Text(text = "Add Portfolio", color = Color.DarkGray)
-            if (addPortfolioState.value) {
-                addToPortfolio(name, name, priceState.value, viewModel)
-                CheckAddPortfolioState(viewModel)
-            }
+
+        CustomButton(
+            width = 260.dp,
+            height = 50.dp,
+            text = "Add to Portfolio",
+            onClick = {
+                val totalPrice = priceState.toFloat() * amountState.toFloat()
+
+                val portfolio = PortfolioModel(
+                    name = name,
+                    symbol = symbol,
+                    buyingPrice = priceState,
+                    amount = amountState,
+                    totalPrice = totalPrice.toString()
+                )
+                // Add the portfolio to the database
+                viewModel.addToPortfolio(portfolio)
+            }) {
+
         }
     }
 }
+
 

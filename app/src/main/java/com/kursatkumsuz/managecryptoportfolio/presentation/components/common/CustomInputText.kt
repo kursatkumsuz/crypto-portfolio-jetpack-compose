@@ -1,4 +1,4 @@
-package com.kursatkumsuz.managecryptoportfolio.presentation.components
+package com.kursatkumsuz.managecryptoportfolio.presentation.components.common
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -27,7 +27,7 @@ fun CustomInputText(
     var textState by remember { mutableStateOf(initialText) }
 
     TextField(
-        value = textState,
+        value = textState.trim(),
         onValueChange = {
             textState = it
             onInput(it)
@@ -41,6 +41,7 @@ fun CustomInputText(
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = backgroundColor,
             focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
             textColor = Color(0xFF95A6C5)
         ),

@@ -38,7 +38,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun loadUserInfo() {
+    private fun loadUserInfo() {
         viewModelScope.launch {
             getUserInfoUseCase.invoke().collect {
                 var userModel = UserModel("", "")
@@ -65,7 +65,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun readNotificationPreference() {
+    private fun readNotificationPreference() {
         viewModelScope.launch {
             _notificationState.value = readNotificationPreferenceUseCase.invoke()
         }

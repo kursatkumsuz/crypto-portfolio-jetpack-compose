@@ -7,7 +7,7 @@ import retrofit2.http.Headers
 
 interface ApiService {
 
-    @Headers("X-CMC_PRO_API_KEY: e4265187-ade2-4eb7-b400-a0f08befe3d4")
+    @Headers("X-CMC_PRO_API_KEY: YOUR_API_KEY")
     @GET("cryptocurrency/listings/latest")
     suspend fun getCoinList() : CoinResponse
 
