@@ -1,38 +1,39 @@
-# Work in progress
+# Crypto Portfolio Manager
+
+The Crypto Portfolio Manager is a cryptocurrency tracking mobile application that allows users to stay up to date with the latest prices. With this app, users can easily track and manage their portfolio.
 
 
 ### Architecture
 
 - MVVM Pattern with Clean Architecture
  
-  <img align="center" src="https://user-images.githubusercontent.com/59700175/206454735-240c6cf5-0260-4ae0-9954-276a2c582586.png" width="25%">
-
 
 ## Package Structure
 
     .
-    ├── presentation                   
-    │   ├── components           
-    │   ├── navigation            
-    │   └── screens                 
-    │
-    ├── infrastructure
-    │   ├── notification           
-    │   └── worker            
+    ├── data  
+    │   ├── local           
+    │   ├── remote  
+    │   ├── repository
+    │   └── worker
+    │   
+    ├── di                       
     │  
     ├── domain
     │   ├── model           
     │   ├── repository            
     │   └── usecase    
     │
-    ├── di
-    │       
-    ├── data  
-    │   ├── local           
-    │   ├── remote            
-    │   └── repository         
-   
+    │
+    ├── presentation                   
+    │   ├── components           
+    │   ├── navigation            
+    │   └── screens 
+    │
+    ├── util  
 
+    
+   
 ## Used in the project
 
 - Jetpack Compose
@@ -42,11 +43,19 @@
 - WorkManager
 - Coroutines
 - Flow
+- Retrofit
 - Room
 - DataStore
+- Canvas
 
-## 📸 Completed Screens
+## 📸 Project Video
 
+
+https://user-images.githubusercontent.com/59700175/210998007-d0177fa0-7b69-4938-9999-53949296f908.mp4
+
+
+
+## 📸 Screens
 
  <pre>
  
