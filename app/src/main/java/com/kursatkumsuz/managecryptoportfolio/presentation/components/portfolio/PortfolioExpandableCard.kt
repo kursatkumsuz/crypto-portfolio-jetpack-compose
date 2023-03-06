@@ -1,8 +1,13 @@
 package com.kursatkumsuz.managecryptoportfolio.presentation.components.portfolio
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kursatkumsuz.managecryptoportfolio.domain.model.coin.CoinItem
 import com.kursatkumsuz.managecryptoportfolio.domain.model.portfolio.PortfolioModel
-import com.kursatkumsuz.managecryptoportfolio.util.FormatCoinPrice
 import com.kursatkumsuz.managecryptoportfolio.util.FormatCoinPrice.Companion.formatPrice
 
 @Composable
@@ -94,9 +98,19 @@ fun PortfolioExpandableCard(portfolio: PortfolioModel, coin: CoinItem) {
                         .align(Alignment.CenterEnd)
                 )
             }
-            if (isExpandState) {
+            AnimatedVisibility(
+                visible = isExpandState,
+                enter = fadeIn() + expandVertically(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioHighBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                )
+            ) {
                 SectionOfExpanded(portfolio = portfolio, coin = coin)
+
             }
+
         }
     }
 }
