@@ -4,13 +4,17 @@ import android.content.Context
 import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.kursatkumsuz.managecryptoportfolio.data.local.FavoritesDao
-import com.kursatkumsuz.managecryptoportfolio.data.local.FavoritesDatabase
-import com.kursatkumsuz.managecryptoportfolio.data.remote.ApiService
-import com.kursatkumsuz.managecryptoportfolio.data.repository.*
-import com.kursatkumsuz.managecryptoportfolio.data.worker.WorkerRequest
-import com.kursatkumsuz.managecryptoportfolio.domain.repository.*
-import com.kursatkumsuz.managecryptoportfolio.util.Constants.Companion.BASE_URL
+import com.kursatkumsuz.data.remote.ApiService
+import com.kursatkumsuz.domain.repository.AuthRepository
+import com.kursatkumsuz.domain.repository.CoinRepository
+import com.kursatkumsuz.domain.repository.DataStoreRepository
+import com.kursatkumsuz.domain.repository.PortfolioRepository
+import com.kursatkumsuz.domain.usecase.worker.WorkerRequest
+import com.kursatkumsuz.data.local.FavoritesDao
+import com.kursatkumsuz.data.local.FavoritesDatabase
+import com.kursatkumsuz.data.repository.*
+import com.kursatkumsuz.domain.repository.FavoritesRepository
+import com.kursatkumsuz.util.Constants.Companion.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -88,8 +92,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWorkerRequest(@ApplicationContext context: Context) =
-        WorkerRequest(context)
+    fun provideWorkerRequest(@ApplicationContext context: Context) = WorkerRequest(context)
 
     @Provides
     @Singleton

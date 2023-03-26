@@ -14,10 +14,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.kursatkumsuz.managecryptoportfolio.presentation.components.common.BottomNavigationBar
-import com.kursatkumsuz.managecryptoportfolio.presentation.navigation.SetupNavGraph
-import com.kursatkumsuz.managecryptoportfolio.ui.theme.ManageCryptoPortfolioTheme
-import com.kursatkumsuz.managecryptoportfolio.util.BottomNavItem
+import com.kursatkumsuz.ui.components.common.BottomNavigationBar
+import com.kursatkumsuz.managecryptoportfolio.navigation.SetupNavGraph
+import com.kursatkumsuz.ui.components.BottomNavItem
+import com.kursatkumsuz.ui.theme.ManageCryptoPortfolioTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -80,6 +80,7 @@ class MainActivity : ComponentActivity() {
         return route
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

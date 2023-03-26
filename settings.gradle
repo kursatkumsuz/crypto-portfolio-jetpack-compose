@@ -14,3 +14,16 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Manage Crypto Portfolio"
 include ':app'
+include ':data'
+include ':core:ui'
+include ':core:util'
+include ':core:domain'
+include ':feature:onboarding'
+include ':feature:favorites'
+include ':feature:market'
+include ':feature:signin'
+include ':feature:signup'
+include ':feature:detail'
+include ':feature:portfolio'
+include ':feature:search'
+include ':feature:settings'
