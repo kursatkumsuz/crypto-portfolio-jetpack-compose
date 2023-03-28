@@ -12,15 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.kursatkumsuz.market.component.CoinListView
+import com.kursatkumsuz.market.component.MarketList
 import com.kursatkumsuz.ui.components.common.LoadingCircularProgress
-import com.kursatkumsuz.managecryptoportfolio.components.market.RowListView
 import kotlinx.coroutines.delay
 
 @Composable
@@ -31,6 +30,8 @@ fun MarketScreen(navController: NavHostController) {
     var refreshState by remember { mutableStateOf(false) }
 
     val loadingState = viewModel.loadingState.value
+
+    val currentBalance = viewModel.currentBalance.value
 
     LaunchedEffect(refreshState) {
         if (refreshState) {
@@ -44,47 +45,44 @@ fun MarketScreen(navController: NavHostController) {
         state = rememberSwipeRefreshState(isRefreshing = refreshState),
         onRefresh = { refreshState = true }
     ) {
-        Box {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = MaterialTheme.colors.primary),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxSize()
+        ) {
 
-                Spacer(modifier = Modifier.height(30.dp))
 
-                PopularCoinList(viewModel, navController)
-
-                Text(
-                    text = "Top 100",
-                    fontSize = 26.sp,
-                    fontWeight = SemiBold,
-                    color = Color.White,
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                CoinList(viewModel, navController = navController)
+            Box {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = MaterialTheme.colors.primary),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(30.dp))
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(10.dp),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(text = "Balance", fontSize = 16.sp, color = Color.LightGray)
+                        Text(
+                            text = "$${String.format("%.2f", currentBalance)}",
+                            fontSize = 28.sp,
+                            color = Color.White,
+                            fontWeight = Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(30.dp))
+                    MarketList(
+                        navController,
+                        coinList = viewModel.cryptoList.value,
+                        viewModel.popularList.value
+                    )
+                }
+                LoadingProgressBar(loadingState)
             }
-            LoadingProgressBar(loadingState)
         }
     }
 }
 
-
-@Composable
-fun CoinList(viewModel: MarketViewModel, navController: NavHostController) {
-    val coinList = viewModel.cryptoList
-    CoinListView(navController = navController, coinList = coinList.value)
-}
-
-@Composable
-fun PopularCoinList(viewModel: MarketViewModel, navController: NavHostController) {
-    val coinList = viewModel.popularList
-    RowListView(coinList = coinList.value, navController)
-
-}
 
 @Composable
 fun LoadingProgressBar(isLoading: Boolean) {
@@ -92,6 +90,7 @@ fun LoadingProgressBar(isLoading: Boolean) {
         LoadingCircularProgress()
     }
 }
+
 
 
 

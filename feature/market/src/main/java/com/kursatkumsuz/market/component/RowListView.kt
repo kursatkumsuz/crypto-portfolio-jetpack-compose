@@ -1,13 +1,19 @@
-package com.kursatkumsuz.managecryptoportfolio.components.market
+package com.kursatkumsuz.market.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -20,7 +26,11 @@ import com.kursatkumsuz.domain.model.coin.CoinItem
 import com.kursatkumsuz.util.FormatCoinPrice
 
 @Composable
-fun RowListView(coinList: List<com.kursatkumsuz.domain.model.coin.CoinItem>, navController: NavHostController) {
+fun RowListView(
+    coinList: List<CoinItem>,
+    navController: NavHostController
+) {
+
     LazyRow(modifier = Modifier.padding(bottom = 40.dp)) {
         items(coinList.size) { index ->
             RowListItem(coin = coinList[index], navController)
@@ -29,19 +39,18 @@ fun RowListView(coinList: List<com.kursatkumsuz.domain.model.coin.CoinItem>, nav
 }
 
 @Composable
-fun RowListItem(coin: com.kursatkumsuz.domain.model.coin.CoinItem, navController: NavHostController) {
+fun RowListItem(coin: CoinItem, navController: NavHostController) {
+    var expandState by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
-            .width(200.dp)
-            .height(220.dp)
-            .padding(10.dp)
+            .width(220.dp)
+            .padding(horizontal = 10.dp)
             .clickable {
-                navController.navigate("detail_screen/${coin.name}/${coin.quote.USD.price.toFloat()}/${coin.symbol}/${coin.quote.USD.percent_change_24h}/${coin.quote.USD.percent_change_1h}")
+                expandState = !expandState
             },
         shape = RoundedCornerShape(16.dp),
     ) {
-
         Column(
             modifier = Modifier
                 .background(
@@ -53,20 +62,22 @@ fun RowListItem(coin: com.kursatkumsuz.domain.model.coin.CoinItem, navController
                     )
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             Text(
                 text = coin.name,
                 color = Color.White,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold
             )
             Card(
-                modifier = Modifier.size(70.dp, 25.dp),
+                modifier = Modifier.size(60.dp, 25.dp),
                 shape = RoundedCornerShape(99.dp)
             ) {
                 Row(
-                    modifier = Modifier.background(Color.White)
+                    modifier = Modifier
+                        .background(Color.White)
                         .padding(5.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
@@ -74,19 +85,48 @@ fun RowListItem(coin: com.kursatkumsuz.domain.model.coin.CoinItem, navController
                     Text(
                         text = coin.symbol,
                         color = Color.DarkGray,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Black,
+                        fontSize = 11.sp,
                     )
                 }
             }
-            Text(
-                text = "$${com.kursatkumsuz.util.FormatCoinPrice.formatPrice(coin.quote.USD.price)}",
-                color = Color.White,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(10.dp)
-            )
+            Spacer(modifier = Modifier.height(15.dp))
+            AnimatedVisibility(
+                visible = expandState,
+                enter = fadeIn() + expandVertically(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioHighBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                )
+            ) {
+                ExpandedSection(coin = coin, navController = navController)
+            }
         }
+    }
+}
+
+@Composable
+fun ExpandedSection(coin: CoinItem, navController: NavHostController) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "$${FormatCoinPrice.formatPrice(coin.quote.USD.price)}",
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+        )
+        IconButton(
+            onClick = {
+                navController.navigate(
+                    "detail_screen/${coin.name}/${coin.quote.USD.price.toFloat()}/${coin.symbol}/${coin.quote.USD.percent_change_24h}/${coin.quote.USD.percent_change_1h}"
+                )
+            }
+        ) {
+            Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "next icon", tint = Color.White)
+        }
+        Spacer(modifier = Modifier.height(10.dp))
     }
 }
