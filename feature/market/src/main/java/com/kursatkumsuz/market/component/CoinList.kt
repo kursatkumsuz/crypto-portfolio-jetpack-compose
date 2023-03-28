@@ -3,7 +3,7 @@ package com.kursatkumsuz.market.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -25,13 +25,10 @@ import com.kursatkumsuz.util.FormatCoinPrice.Companion.formatPrice
 import com.kursatkumsuz.market.R
 
 
-@Composable
-fun CoinListView(navController: NavHostController, coinList: List<CoinItem>) {
-    LazyColumn(modifier = Modifier.padding(bottom = 40.dp)) {
+fun LazyListScope.CoinListView(navController: NavHostController, coinList: List<CoinItem>) {
         items(coinList.size) { index ->
             ListItem(coin = coinList[index], navController = navController)
         }
-    }
 }
 
 
