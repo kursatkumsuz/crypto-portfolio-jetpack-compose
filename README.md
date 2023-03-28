@@ -4,34 +4,8 @@ The Crypto Portfolio Manager is a cryptocurrency tracking mobile application tha
 
 
 ### Architecture
-
-- MVVM Pattern with Clean Architecture
- 
-
-## Package Structure
-
-    .
-    ├── data  
-    │   ├── local           
-    │   ├── remote  
-    │   ├── repository
-    │   └── worker
-    │   
-    ├── di                       
-    │  
-    ├── domain
-    │   ├── model           
-    │   ├── repository            
-    │   └── usecase    
-    │
-    │
-    ├── presentation                   
-    │   ├── components           
-    │   ├── navigation            
-    │   └── screens 
-    │
-    ├── util  
-
+- Multi-Module Architecture
+- MVVM Design Pattern 
     
    
 ## Used in the project
