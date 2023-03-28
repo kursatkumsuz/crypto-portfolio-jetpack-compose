@@ -1,6 +1,5 @@
 package com.kursatkumsuz.detail
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,8 +7,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -21,6 +20,7 @@ import com.kursatkumsuz.ui.components.common.CustomButton
 import com.kursatkumsuz.ui.components.common.CustomInputText
 import com.kursatkumsuz.detail.component.BackButton
 import com.kursatkumsuz.detail.component.InfoCard
+import com.kursatkumsuz.domain.model.portfolio.PortfolioModel
 import com.kursatkumsuz.util.FormatCoinPrice.Companion.formatPrice
 import kotlinx.coroutines.launch
 
@@ -45,10 +45,21 @@ fun DetailScreen(
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
-        sheetContent = { BottomSheet(name, symbol, price.toString(), viewModel) },
+        sheetContent = {
+            BottomSheet(
+                name,
+                symbol,
+                price.toString(),
+                viewModel,
+                navHostController
+            )
+        },
         modifier = Modifier.fillMaxSize()
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -76,12 +87,11 @@ fun DetailScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(text = symbol, fontSize = 20.sp, color = Color.Black)
+                        Text(text = symbol, fontSize = 20.sp, color = Color.Black, fontWeight = FontWeight.Black)
                     }
                 }
 
                 Spacer(modifier = Modifier.height(30.dp))
-
                 Text(text = "$$formattedPrice", fontSize = 36.sp, color = Color.White)
                 Spacer(modifier = Modifier.height(40.dp))
                 DetailInfoSection(lastDayChange.toDouble(), lastOneHourChange.toDouble())
@@ -101,9 +111,9 @@ fun DetailScreen(
                 CustomButton(
                     text = "Add To Favorite",
                     onClick = {
-                        val favorite =
-                            FavoritesEntity(symbol)
+                        val favorite = FavoritesEntity(symbol)
                         viewModel.addToFavorite(favorite)
+                        navHostController.navigate("favorites_screen")
                     }) {
                 }
             }
@@ -127,7 +137,13 @@ fun DetailInfoSection(lastDayChange: Double, lastOneHourChange: Double) {
 
 
 @Composable
-fun BottomSheet(name: String, symbol: String, price: String, viewModel: DetailViewModel) {
+fun BottomSheet(
+    name: String,
+    symbol: String,
+    price: String,
+    viewModel: DetailViewModel,
+    navHostController: NavHostController
+) {
 
     var priceState by remember { mutableStateOf(price) }
     var amountState by remember { mutableStateOf("0.0") }
@@ -173,15 +189,15 @@ fun BottomSheet(name: String, symbol: String, price: String, viewModel: DetailVi
             onClick = {
                 val totalPrice = priceState.toFloat() * amountState.toFloat()
 
-                val portfolio = com.kursatkumsuz.domain.model.portfolio.PortfolioModel(
+                val portfolio = PortfolioModel(
                     name = name,
                     symbol = symbol,
                     buyingPrice = priceState,
                     amount = amountState,
                     totalPrice = totalPrice.toString()
                 )
-                // Add the portfolio to the database
                 viewModel.addToPortfolio(portfolio)
+                navHostController.navigate("portfolio_screen")
             }) {
 
         }
