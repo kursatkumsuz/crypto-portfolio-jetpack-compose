@@ -1,7 +1,6 @@
 package com.kursatkumsuz.data.repository
 
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.kursatkumsuz.domain.model.portfolio.PortfolioModel
@@ -11,18 +10,32 @@ class PortfolioRepositoryImp(private val firebaseFirestore: FirebaseFirestore) :
     PortfolioRepository {
 
     override suspend fun addToPortfolio(
-        userUid : String,
+        userUid: String,
         portfolioModel: PortfolioModel
-    ): Task<DocumentReference?> {
-        return firebaseFirestore.collection("portfolio").document(userUid).collection("coins").add(portfolioModel)
+    ): Task<Void?> {
+        return firebaseFirestore
+            .collection("portfolio")
+            .document(userUid)
+            .collection("coins")
+            .document(portfolioModel.symbol)
+            .set(portfolioModel)
     }
 
     override suspend fun getPortfolio(userUid: String): Task<QuerySnapshot?> {
-        return firebaseFirestore.collection("portfolio").document(userUid).collection("coins").get()
+        return firebaseFirestore
+            .collection("portfolio")
+            .document(userUid)
+            .collection("coins")
+            .get()
 
     }
 
-    override suspend fun deletePortfolio(userUid: String, docId: String) : Task<Void?> {
-        return firebaseFirestore.collection("portfolio").document(userUid).collection("coins").document(docId).delete()
+    override suspend fun deletePortfolio(userUid: String, name: String): Task<Void?> {
+        return firebaseFirestore
+            .collection("portfolio")
+            .document(userUid)
+            .collection("coins")
+            .document(name)
+            .delete()
     }
 }

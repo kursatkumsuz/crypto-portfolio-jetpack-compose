@@ -36,8 +36,9 @@ fun PortfolioListView(
             if (dismissState.isDismissed(DismissDirection.EndToStart)) {
                 LaunchedEffect(key1 = Unit) {
 
-                    portfolio[index].id?.let {
+                    portfolio[index].symbol.let {
                         viewModel.deletePortfolio(it)
+                        println("Doc Id: $it")
                         dismissState.reset()
                     }
                 }

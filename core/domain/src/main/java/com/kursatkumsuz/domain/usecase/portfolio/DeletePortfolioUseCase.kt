@@ -12,12 +12,11 @@ class DeletePortfolioUseCase @Inject constructor(
     private val portfolioRepository: PortfolioRepository,
     private val authRepository: AuthRepository
 ) {
-     operator fun invoke(docId: String): Flow<Response<Void?>> = flow {
+     operator fun invoke(symbol: String): Flow<Response<Void?>> = flow {
         val userUid = authRepository.userUid()
         try {
             emit(Response.Loading)
-            emit(Response.Success(portfolioRepository.deletePortfolio(userUid, docId).await()))
-            println("Çalışıyor")
+            emit(Response.Success(portfolioRepository.deletePortfolio(userUid, symbol).await()))
         } catch (e: Exception) {
             emit(Response.Error(e.localizedMessage ?: "Unexpected Error!"))
         }

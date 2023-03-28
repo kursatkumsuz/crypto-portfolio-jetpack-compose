@@ -3,7 +3,6 @@ package com.kursatkumsuz.portfolio
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.QuerySnapshot
 import com.kursatkumsuz.domain.model.coin.CoinItem
 import com.kursatkumsuz.domain.model.portfolio.PieChartModel
 import com.kursatkumsuz.domain.model.portfolio.PortfolioModel
@@ -58,12 +57,13 @@ class PortfolioViewModel @Inject constructor(
 
 
     private fun loadPortfolio() {
-        // Load the portfolio data
         viewModelScope.launch {
             getPortfolioUseCase.invoke().collect { response ->
                 when (response) {
                     is Response.Success -> {
-                        _portfolioState.value = convertSnapshotToPortfolioModel(response.data)
+                        response.data?.toObjects(PortfolioModel::class.java)?.let { list ->
+                            _portfolioState.value = list
+                        }
                         calculate()
                         _loadingState.value = false
                     }
@@ -78,37 +78,10 @@ class PortfolioViewModel @Inject constructor(
         }
     }
 
-    /**
-    *Takes a [QuerySnapshot] and returns a list of [PortfolioModel] objects.
-    *Creates a new [PortfolioModel] instance for each document in the snapshot and adds it to the list.
-    *@param snapshot The [QuerySnapshot] to be processed.
-    *@return A list of [PortfolioModel] objects.
-     */
-    private fun convertSnapshotToPortfolioModel(snapshot: QuerySnapshot?): List<PortfolioModel> {
-        val list = ArrayList<PortfolioModel>()
 
-        snapshot?.documents?.forEach { doc ->
-            val portfolio = PortfolioModel(
-                doc.id,
-                doc.get("name").toString(),
-                doc.get("symbol").toString(),
-                doc.get("buyingPrice").toString(),
-                doc.get("amount").toString(),
-                doc.get("totalPrice").toString(),
-            )
-            list.add(portfolio)
-
-        }
-        return list
-    }
-
-    /**
-     * Deletes a portfolio from the database.
-     * @param docId The ID of the portfolio document to be deleted.
-     */
-    fun deletePortfolio(docId: String) {
+    fun deletePortfolio(symbol: String) {
         viewModelScope.launch {
-            deletePortfolioUseCase.invoke(docId).collect {
+            deletePortfolioUseCase.invoke(symbol).collect {
                 when (it) {
                     is Response.Success -> {
                         refresh()
@@ -125,10 +98,7 @@ class PortfolioViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Loads the list of coins from the API.
-     * Sets the [coinState] and [loadingState] based on the response of the API.
-     */
+
     private fun loadCoinsFromApi() {
         viewModelScope.launch {
             getCoinUseCase.invoke().collect { response ->
@@ -157,14 +127,12 @@ class PortfolioViewModel @Inject constructor(
 
     private fun setLists() {
 
-        // Initialize lists for pie chart model, portfolio model, selected coins, and prices
         val pieChartList = ArrayList<PieChartModel>()
         val selectedPortfolioList = ArrayList<PortfolioModel>()
         val selectedCoinList = ArrayList<CoinItem>()
         val lastPriceList = ArrayList<Double>()
         val buyingPriceList = ArrayList<Double>()
 
-        // Find matching portfolios and add them to the appropriate lists
         addMatchingPortfolios(
             selectedPortfolioList,
             pieChartList,
@@ -181,14 +149,7 @@ class PortfolioViewModel @Inject constructor(
         _totalBuyingPriceState.value = buyingPriceList.sum()
     }
 
-    /**
-     * Adds matching portfolios to the provided lists
-     * @param selectedPortfolioList List of selected portfolio models to be added
-     * @param pieChartList List of pie chart models to be added
-     * @param selectedCoinList List of selected coin items to be added
-     * @param lastPriceList List of last prices to be added
-     * @param buyingPriceList List of buying prices to be added
-     */
+
     private fun addMatchingPortfolios(
         selectedPortfolioList: MutableList<PortfolioModel>,
         pieChartList: MutableList<PieChartModel>,
@@ -224,9 +185,6 @@ class PortfolioViewModel @Inject constructor(
     }
 
 
-    /**
-     * Calculate the profit for the portfolios
-     */
     private fun calculateProfit() {
         val difference = _totalCurrentBalanceState.value - _totalBuyingPriceState.value
         val result = difference * 100 / _totalBuyingPriceState.value
