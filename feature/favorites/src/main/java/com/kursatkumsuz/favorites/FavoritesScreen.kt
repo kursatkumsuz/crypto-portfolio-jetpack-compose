@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kursatkumsuz.favorites.component.FavoriteListView
-import com.kursatkumsuz.ui.components.common.LoadingCircularProgress
+import com.kursatkumsuz.ui.components.ColumnListShimmerEffect
 
 @Composable
 fun FavoritesScreen() {
@@ -23,10 +23,11 @@ fun FavoritesScreen() {
             .fillMaxSize()
             .background(MaterialTheme.colors.primary)
     ) {
-        FavoriteListView(coinList, favoriteList, viewModel)
 
         if(loadingState) {
-            LoadingCircularProgress()
+            ColumnListShimmerEffect()
+        }else {
+            FavoriteListView(coinList, favoriteList, viewModel)
         }
     }
 }

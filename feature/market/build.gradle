@@ -48,6 +48,7 @@ dependencies {
     implementation libs.hilt.work
     implementation libs.hilt.navigation.compose
     implementation libs.accompanist.swiperefresh
+    implementation libs.firebase.firestore
     implementation(project(":core:domain"))
     implementation(project(":core:util"))
     implementation(project(":core:ui"))

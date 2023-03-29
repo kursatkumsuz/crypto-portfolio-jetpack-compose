@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,7 +20,8 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.kursatkumsuz.market.component.MarketList
-import com.kursatkumsuz.ui.components.common.LoadingCircularProgress
+import com.kursatkumsuz.market.component.RowListShimmerEffect
+import com.kursatkumsuz.ui.components.ColumnListShimmerEffect
 import kotlinx.coroutines.delay
 
 @Composable
@@ -45,51 +47,68 @@ fun MarketScreen(navController: NavHostController) {
         state = rememberSwipeRefreshState(isRefreshing = refreshState),
         onRefresh = { refreshState = true }
     ) {
-        BoxWithConstraints(
+        Box(
             modifier = Modifier.fillMaxSize()
         ) {
-
-
-            Box {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colors.primary),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(30.dp))
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = MaterialTheme.colors.primary),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    horizontalAlignment = Alignment.Start
                 ) {
-                    Spacer(modifier = Modifier.height(30.dp))
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(10.dp),
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        Text(text = "Balance", fontSize = 16.sp, color = Color.LightGray)
-                        Text(
-                            text = "$${String.format("%.2f", currentBalance)}",
-                            fontSize = 28.sp,
-                            color = Color.White,
-                            fontWeight = Bold
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(30.dp))
+                    Text(text = "Balance", fontSize = 16.sp, color = Color.LightGray)
+                    Text(
+                        text = "$${String.format("%.2f", currentBalance)}",
+                        fontSize = 28.sp,
+                        color = Color.White,
+                        fontWeight = Bold
+                    )
+                }
+                Spacer(modifier = Modifier.height(30.dp))
+
+                if (loadingState) {
+                    ShimmerContent()
+                } else {
                     MarketList(
                         navController,
                         coinList = viewModel.cryptoList.value,
                         viewModel.popularList.value
                     )
                 }
-                LoadingProgressBar(loadingState)
             }
         }
     }
 }
 
-
 @Composable
-fun LoadingProgressBar(isLoading: Boolean) {
-    if (isLoading) {
-        LoadingCircularProgress()
+fun ShimmerContent() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colors.primary),
+    ) {
+        RowListShimmerEffect()
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 20.dp),
+            text = "Market Data",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.White,
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        ColumnListShimmerEffect()
     }
 }
+
 
 
 
