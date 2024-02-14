@@ -1,4 +1,4 @@
-package com.kursatkumsuz.domain.model.onboarding
+package com.kursatkumsuz.onboarding
 
 import androidx.annotation.DrawableRes
 import com.kursatkumsuz.domain.R
