@@ -1,4 +1,4 @@
-package com.kursatkumsuz.managecryptoportfolio.components.portfolio
+package com.kursatkumsuz.portfolio.component
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kursatkumsuz.domain.model.portfolio.PieChartModel
 import com.kursatkumsuz.util.FormatCoinPrice.Companion.formatPrice
 import com.kursatkumsuz.util.chartColorList
 import kotlin.math.PI
@@ -40,7 +39,7 @@ fun PieChart(
 
     var isCenterClicked by remember { mutableStateOf(false) }
 
-    val colorList = com.kursatkumsuz.util.chartColorList()
+    val colorList = chartColorList()
 
     Box(
         modifier = modifier,

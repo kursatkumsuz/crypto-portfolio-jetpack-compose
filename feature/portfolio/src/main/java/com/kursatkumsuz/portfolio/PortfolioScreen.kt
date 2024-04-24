@@ -4,7 +4,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabPosition
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,9 +21,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.kursatkumsuz.managecryptoportfolio.components.portfolio.PieChart
+import com.kursatkumsuz.portfolio.component.PieChart
 import com.kursatkumsuz.portfolio.component.PortfolioListView
-import com.kursatkumsuz.ui.components.common.LoadingCircularProgress
+import com.kursatkumsuz.ui.components.LoadingCircularProgress
 import com.kursatkumsuz.util.FormatCoinPrice.Companion.formatPrice
 import kotlinx.coroutines.delay
 
@@ -52,17 +57,20 @@ fun PortfolioScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = MaterialTheme.colors.primary),
+                    .background(color = MaterialTheme.colorScheme.background),
             ) {
-
-
                 Spacer(modifier = Modifier.height(20.dp))
                 CustomTableRow(lastBalance, buyingPrice, profit, chartList)
                 Spacer(modifier = Modifier.height(40.dp))
 
                 Text(text = "Your Assets", color = Color.White, fontSize = 18.sp)
 
-                PortfolioListView(list, coinList, viewModel)
+                PortfolioListView(
+                    portfolio = list,
+                    coin = coinList,
+                    onDeleteItem = {symbol ->
+                        viewModel.deletePortfolio(symbol = symbol)
+                    })
             }
             if (isLoading)
                 LoadingCircularProgress()
@@ -145,7 +153,7 @@ fun CustomTableRow(
 
         TabRow(
             selectedTabIndex = selectedIndex,
-            backgroundColor = Color(0xFF223449),
+            containerColor = Color(0xFF223449),
             modifier = Modifier
                 .padding(vertical = 4.dp, horizontal = 8.dp)
                 .width(300.dp)

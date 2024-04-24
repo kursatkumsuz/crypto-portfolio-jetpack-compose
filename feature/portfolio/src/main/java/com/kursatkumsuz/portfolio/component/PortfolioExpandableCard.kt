@@ -12,9 +12,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.mutableStateOf
@@ -30,7 +31,7 @@ import com.kursatkumsuz.util.FormatCoinPrice.Companion.formatPrice
 
 @Composable
 fun PortfolioExpandableCard(portfolio: PortfolioModel, coin: CoinItem) {
-    var isExpandState by remember { mutableStateOf(false) }
+    var expandState by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
@@ -42,15 +43,20 @@ fun PortfolioExpandableCard(portfolio: PortfolioModel, coin: CoinItem) {
                 )
             )
             .padding(5.dp)
-            .clickable { isExpandState = !isExpandState },
+            .clickable { expandState = !expandState },
         shape = RoundedCornerShape(12.dp),
-        backgroundColor = MaterialTheme.colors.secondary
+        colors = CardColors(
+            contentColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.onBackground,
+            disabledContentColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent
+        )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp)
-                .background(MaterialTheme.colors.secondary)
+                .background(MaterialTheme.colorScheme.onBackground)
         ) {
 
             Box(
@@ -99,7 +105,7 @@ fun PortfolioExpandableCard(portfolio: PortfolioModel, coin: CoinItem) {
                 )
             }
             AnimatedVisibility(
-                visible = isExpandState,
+                visible = expandState,
                 enter = fadeIn() + expandVertically(
                     animationSpec = spring(
                         dampingRatio = Spring.DampingRatioHighBouncy,
@@ -124,7 +130,7 @@ fun SectionOfExpanded(portfolio: PortfolioModel, coin: CoinItem) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colors.secondary)
+            .background(MaterialTheme.colorScheme.onBackground)
     ) {
 
         Column(modifier = Modifier.align(Alignment.TopStart)) {

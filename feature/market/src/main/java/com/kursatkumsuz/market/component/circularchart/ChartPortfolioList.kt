@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,7 +35,11 @@ fun ChartPortfolioList(coinList: List<PortfolioModel>, totalBalance: Float) {
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(coinList.size) { index ->
-            ListItem(coin = coinList[index], totalBalance = totalBalance, color = colors[index % 11])
+            ListItem(
+                coin = coinList[index],
+                totalBalance = totalBalance,
+                color = colors[index % 11]
+            )
         }
     }
 }
@@ -54,27 +59,25 @@ fun ListItem(coin: PortfolioModel, totalBalance: Float, color: Color) {
 
     Box(
         modifier = Modifier
-            .padding(10.dp)
+            .padding(top = 30.dp, start = 5.dp, end = 5.dp)
             .clip(RoundedCornerShape(10.dp)),
     ) {
         Column(
             modifier = Modifier
                 .size(width = 130.dp, height = 80.dp)
-                .background(Color(0xFF262A35)),
+                .background(MaterialTheme.colorScheme.onBackground),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(text = coin.symbol, color = Color(0xFF868EB8))
             LinearProgressIndicator(
-                progress = {
-                    progress.value / 100f
-                },
+                progress = progress.value / 100f,
                 modifier = Modifier.padding(horizontal = 10.dp),
                 color = color,
                 trackColor = Color(0xFF434C64),
             )
             Text(
-                text = " ${"%.2f".format(progress.value)} % ", color = Color.White
+                text = "${"%.2f".format(progress.value)} %", color = Color.White
             )
 
         }

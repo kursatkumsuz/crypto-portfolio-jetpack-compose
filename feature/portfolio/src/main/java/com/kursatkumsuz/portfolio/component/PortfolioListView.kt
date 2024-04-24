@@ -6,9 +6,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
+import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,27 +26,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kursatkumsuz.domain.model.coin.CoinItem
 import com.kursatkumsuz.domain.model.portfolio.PortfolioModel
-import com.kursatkumsuz.portfolio.PortfolioViewModel
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PortfolioListView(
     portfolio: List<PortfolioModel>,
     coin: List<CoinItem>,
-    viewModel: PortfolioViewModel
+    onDeleteItem : (String) -> Unit
 ) {
     LazyColumn(contentPadding = PaddingValues(top = 20.dp, bottom = 60.dp)) {
         items(portfolio.size) { index ->
 
+
             val dismissState = rememberDismissState()
             if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+                val coinId = portfolio[index].symbol
+                onDeleteItem(coinId)
                 LaunchedEffect(key1 = Unit) {
-
-                    portfolio[index].symbol.let {
-                        viewModel.deletePortfolio(it)
-                        println("Doc Id: $it")
-                        dismissState.reset()
-                    }
+                    dismissState.reset()
                 }
             }
 
@@ -49,20 +52,18 @@ fun PortfolioListView(
                 directions = setOf(
                     DismissDirection.EndToStart
                 ),
-                dismissThresholds = { direction ->
-                    FractionalThreshold(if (direction == DismissDirection.EndToStart) 0.1f else 0.05f)
-                },
                 background = {
                     val color by animateColorAsState(
                         when (dismissState.targetValue) {
-                            DismissValue.Default -> MaterialTheme.colors.secondary
+                            DismissValue.Default -> Color.Transparent
                             else -> Color.Red
-                        }
+                        }, label = ""
                     )
                     val icon = Icons.Default.Delete
 
                     val scale by animateFloatAsState(
-                        if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f
+                        if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f,
+                        label = ""
                     )
 
                     Box(
@@ -82,12 +83,13 @@ fun PortfolioListView(
                     }
                 },
                 dismissContent = {
-                    if (portfolio.isNotEmpty() && coin.isNotEmpty()) {
-                        PortfolioExpandableCard(portfolio[index], coin[index])
-                    }
+                    PortfolioExpandableCard(
+                        portfolio = portfolio[index],
+                        coin = coin[index]
+                    )
                 }
-
             )
+
 
         }
 
