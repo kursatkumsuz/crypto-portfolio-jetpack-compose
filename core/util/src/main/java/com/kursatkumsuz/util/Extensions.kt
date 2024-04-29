@@ -23,3 +23,15 @@ fun Float.toAnimate(durationMillis : Int = 2000, delay : Long = 0): Float {
     return resultValue.value
 }
 
+fun Double.toFormatPrice(): String {
+    val dec = DecimalFormat("#,###.00")
+    val formattedPrice = String.format(Locale.US, "%.10f", this)
+    val zeroCount = formattedPrice.drop(2)
+        .takeWhile { it == '0' }.length
+    return if (zeroCount >= 5) {
+        val remainingDigits = formattedPrice.drop(2 + zeroCount)
+        "0.{${zeroCount}}${remainingDigits}"
+    } else {
+        dec.format(this)
+    }
+}
